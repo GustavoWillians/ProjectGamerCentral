@@ -4,7 +4,7 @@ import json
 
 # --- CONFIGURAÇÃO ---
 # Cole sua chave da API da Steam aqui
-API_KEY = "48C424D69881697ED5756D576A2CD69C" 
+API_KEY = "" 
 # Coloque seu ID Steam64 aqui. Se não souber, use um site como o "SteamID.io" para encontrar.
 STEAM_ID = "76561198219730140" 
 # --- FIM DA CONFIGURAÇÃO ---
