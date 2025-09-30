@@ -1,20 +1,20 @@
-// lib/main.dart (VERSÃO SIMPLIFICADA PARA TESTE)
+// lib/main.dart
 
 import 'package:flutter/material.dart';
-// Removemos os imports de desktop_window e dart:io
-
 import 'models/activity_event.dart';
 import 'models/dashboard_data.dart';
 import 'screens/all_games_screen.dart';
 import 'screens/archetype_screen.dart';
+import 'screens/mural_screen.dart';
 import 'screens/timeline_screen.dart';
 import 'services/steam_api_service.dart';
 import 'widgets/dna_radar_chart.dart';
 import 'widgets/kpi_card.dart';
 import 'widgets/recent_activity_item.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-// VOLTAMOS PARA A FUNÇÃO MAIN MAIS SIMPLES POSSÍVEL
-void main() {
+void main() async {
+  await dotenv.load(fileName: ".env");
   runApp(const JornadaGamerApp());
 }
 
@@ -47,9 +47,9 @@ class JornadaGamerApp extends StatelessWidget {
   }
 }
 
-// O resto do arquivo (DashboardScreen, etc.) continua o mesmo
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
+
   @override
   State<DashboardScreen> createState() => _DashboardScreenState();
 }
@@ -71,6 +71,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
       appBar: AppBar(
         title: const Text('Jornada Gamer'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.star_outline),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MuralScreen()),
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.timeline),
             onPressed: _dashboardData == null ? null : () {
@@ -144,8 +153,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ),
                         ),
                         const SizedBox(width: 12),
-                        const Expanded(
-                          child: KpiCard(value: 'N/A', label: 'Maestria', isHighlighted: true),
+                        Expanded(
+                          child: KpiCard(
+                            value: dashboardData.generalMasteryIndex.toStringAsFixed(1),
+                            label: 'Maestria',
+                            isHighlighted: true,
+                          ),
                         ),
                       ],
                     ),
@@ -184,6 +197,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         description: event.description,
                         timeAgo: timeAgo,
                         icon: icon,
+                        appId: event.appId, // <-- PASSANDO O App ID NECESSÁRIO
                       );
                     }).toList(),
                   
