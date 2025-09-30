@@ -341,7 +341,7 @@ class SteamApiService {
       ]);
 
       final genres = (detailsResults[0] as Map<String, List<String>>)['genres']!;
-      final rawgData = detailsResults[1] as Map<String, dynamic>;
+      final rawgData = detailsResults[1];
       final List rawgTagsRaw = rawgData['tags'] ?? [];
       final tags = rawgTagsRaw.map((t) => t['name'].toString()).where((t) => !_tagsToIgnore.contains(t)).toList();
 
