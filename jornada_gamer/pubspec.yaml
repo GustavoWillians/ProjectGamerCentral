@@ -41,6 +41,12 @@ dependencies:
   desktop_window: ^0.4.2
   flutter_dotenv: ^6.0.0
 
+    # DEPENDÊNCIAS DO FIREBASE (ADICIONADAS NOVAMENTE)
+  firebase_core: ^2.27.0
+  firebase_auth: ^4.17.8
+  flutter_web_auth_2: ^4.1.0
+  cloud_firestore: ^4.17.5
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -94,3 +100,11 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+platforms:
+  android:
+  ios:
+  linux:
+  macos:
+  web:
+  windows:

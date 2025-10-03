@@ -1,20 +1,30 @@
 // lib/main.dart
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
+import 'screens/auth_gate.dart';
 import 'models/activity_event.dart';
 import 'models/dashboard_data.dart';
 import 'screens/all_games_screen.dart';
 import 'screens/archetype_screen.dart';
+import 'screens/login_screen.dart';
 import 'screens/mural_screen.dart';
 import 'screens/timeline_screen.dart';
 import 'services/steam_api_service.dart';
 import 'widgets/dna_radar_chart.dart';
 import 'widgets/kpi_card.dart';
 import 'widgets/recent_activity_item.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() async {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const JornadaGamerApp());
 }
 
@@ -42,7 +52,7 @@ class JornadaGamerApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const DashboardScreen(),
+      home: const AuthGate(),
     );
   }
 }
@@ -70,18 +80,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Jornada Gamer'),
+        // AQUI ESTÁ A CORREÇÃO: Usando um Menu de Overflow
         actions: [
-          IconButton(
-            icon: const Icon(Icons.star_outline),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const MuralScreen()),
-              );
-            },
-          ),
+          // Ação principal (Linha do Tempo) continua visível
           IconButton(
             icon: const Icon(Icons.timeline),
+            tooltip: 'Linha do Tempo', // Texto de ajuda
             onPressed: _dashboardData == null ? null : () {
               Navigator.push(
                 context,
@@ -90,6 +94,42 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
               );
             },
+          ),
+          // Menu de Overflow (3 pontos) para as outras ações
+          PopupMenuButton<String>(
+            onSelected: (value) async {
+              if (value == 'mural') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MuralScreen()),
+                );
+              } else if (value == 'sair') {
+                await FirebaseAuth.instance.signOut();
+                // A navegação é tratada pelo AuthGate
+              }
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              const PopupMenuItem<String>(
+                value: 'mural',
+                child: Row(
+                  children: [
+                    Icon(Icons.star_outline, color: Colors.white),
+                    SizedBox(width: 8),
+                    Text('Mural da Jornada'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem<String>(
+                value: 'sair',
+                child: Row(
+                  children: [
+                    Icon(Icons.logout, color: Colors.white),
+                    SizedBox(width: 8),
+                    Text('Sair'),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -197,7 +237,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         description: event.description,
                         timeAgo: timeAgo,
                         icon: icon,
-                        appId: event.appId, // <-- PASSANDO O App ID NECESSÁRIO
+                        appId: event.appId,
                       );
                     }).toList(),
                   

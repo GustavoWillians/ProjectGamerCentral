@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 3.14)
 project(runner LANGUAGES CXX)
 
+# --- A CORREÇÃO DEFINITIVA E GLOBAL ESTÁ AQUI ---
+# 1. Força o uso do padrão C++17 (/std:c++17) para todo o projeto.
+# 2. Também desativa o aviso C4996 (/wd4996) globalmente.
+# 3. Adiciona a flag /FS para resolver conflitos de compilação paralela.
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++17 /wd4996 /FS")
+
 # Define the application target. To change its name, change BINARY_NAME in the
 # top-level CMakeLists.txt, not the value here, or `flutter run` will no longer
 # work.
